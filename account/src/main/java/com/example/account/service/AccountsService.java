@@ -1,10 +1,13 @@
 package com.example.account.service;
 
 import com.example.account.constants.AccountsConstants;
+import com.example.account.dto.AccountsDto;
 import com.example.account.dto.CustomerDto;
 import com.example.account.entity.Accounts;
 import com.example.account.entity.Customer;
 import com.example.account.exception.CustomerAlreadyExistsException;
+import com.example.account.exception.ResourceNotFoundException;
+import com.example.account.mapper.AccountsMapper;
 import com.example.account.mapper.CustomerMapper;
 import com.example.account.repository.AccountsRepository;
 import com.example.account.repository.CustomerRepository;
@@ -46,7 +49,15 @@ public class AccountsService {
     }
 
     public CustomerDto fetchAccount(String mobileNumber){
+        Customer customer = customerRepository.findByMobileNumber(mobileNumber)
+                .orElseThrow(()-> new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber));
+        Accounts accounts = accountsRepository.findByCustomerId(customer.getCustomerId())
+                .orElseThrow(()-> new ResourceNotFoundException("Account", "customerId", customer.getEmail()));
 
+        CustomerDto customerDto = CustomerMapper.mapToCustomerDto(customer, new CustomerDto());
+        customerDto.setAccountsDto(AccountsMapper.mapToAccountsDto(accounts, new AccountsDto()));
+        return customerDto;
     }
+
 
 }
