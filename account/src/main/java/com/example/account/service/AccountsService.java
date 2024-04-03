@@ -11,6 +11,7 @@ import com.example.account.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
 
@@ -27,6 +28,8 @@ public class AccountsService {
         if(optionalCustomer.isPresent()){
             throw new CustomerAlreadyExistsException("Customer already registered with given number");
         }
+        customer.setCreatedAt(LocalDateTime.now());
+        customer.setCreatedBy("AntBird");
         Customer savedCustomer = customerRepository.save(customer);
         accountsRepository.save(createNewAccount(savedCustomer));
     }
@@ -40,6 +43,10 @@ public class AccountsService {
         newAccounts.setAccountType(AccountsConstants.SAVINGS);
         newAccounts.setBranchAddress(AccountsConstants.ADDRESS);
         return newAccounts;
+    }
+
+    public CustomerDto fetchAccount(String mobileNumber){
+
     }
 
 }
