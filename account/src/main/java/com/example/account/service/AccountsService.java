@@ -4,6 +4,7 @@ import com.example.account.constants.AccountsConstants;
 import com.example.account.dto.CustomerDto;
 import com.example.account.entity.Accounts;
 import com.example.account.entity.Customer;
+import com.example.account.exception.CustomerAlreadyExistsException;
 import com.example.account.mapper.CustomerMapper;
 import com.example.account.repository.AccountsRepository;
 import com.example.account.repository.CustomerRepository;
@@ -23,6 +24,9 @@ public class AccountsService {
     public void createAccount(CustomerDto customerDto){
         Customer customer = CustomerMapper.mapToCustomer(customerDto, new Customer());
         Optional<Customer> optionalCustomer = customerRepository.findByMobileNumber(customerDto.getMobileNumber());
+        if(optionalCustomer.isPresent()){
+            throw new CustomerAlreadyExistsException("Customer already registered with given number");
+        }
         Customer savedCustomer = customerRepository.save(customer);
         accountsRepository.save(createNewAccount(savedCustomer));
     }
