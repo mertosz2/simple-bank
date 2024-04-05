@@ -38,7 +38,7 @@ public class AccountsController {
 
     }
 
-    @PostMapping("/update")
+    @PutMapping("/update")
     public ResponseEntity<ResponseDto> updateAccountDetails(@Valid @RequestBody CustomerDto customerDto){
         boolean isUpdated = accountsService.updateAccount(customerDto);
         if(isUpdated){
